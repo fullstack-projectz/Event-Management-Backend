@@ -122,9 +122,7 @@ router.post('/events', authMiddleware, async (req, res) => {
 });
 
 
-// Admin route to approve an event
-// Admin route to update the status of an event
-router.put('/events/status/:id', authMiddleware, async (req, res) => {
+router.put('/events/:id', authMiddleware, async (req, res) => {
     const { status } = req.body; // Get status from the request body
     try {
         const event = await Event.findById(req.params.id); // Find event by ID
