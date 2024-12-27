@@ -122,20 +122,26 @@ router.post('/events', authMiddleware, async (req, res) => {
 });
 
 
-router.put('/events/:id', authMiddleware, async (req, res) => {
-    const { status } = req.body; // Get status from the request body
+router.patch('/events/:id', authMiddleware, async (req, res) => {
+    const { title, date, hour, description, location, status } = req.body; // Get status from the request body
     try {
-        const event = await Event.findById(req.params.id); // Find event by ID
+        const event = await Event.findById(req.params.id)
         if (!event) {
             return res.status(404).json({ message: 'Event not found' });
         }
 
         if (!status) {
-            return res.status(400).json({ message: 'Status is required' });
+            return res.status(400).json({ message: 'Field is required' });
         }
 
         // Update the status field of the event
         event.status = status;
+        event.title = title;
+        event.date = date;
+        event.description = description;
+        event.location = location;
+        event.hour = hour;
+
         await event.save();
 
         res.json({ message: 'Event status updated successfully', event });
