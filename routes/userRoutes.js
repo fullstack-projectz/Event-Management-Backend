@@ -51,6 +51,7 @@ router.post('/events', authMiddleware, async (req, res) => {
             description,
             date,
             location,
+            hour,
             createdBy: userId,
         });
         await event.save();
@@ -62,7 +63,7 @@ router.post('/events', authMiddleware, async (req, res) => {
 
 // Edit an event (only for the event's creator)
 router.put('/events/:id', authMiddleware, async (req, res) => {
-    const { name, description, date, hour, status } = req.body;
+    const { title, description, date, hour, status, location } = req.body;
     const userId = req.user.id;
 
     try {
@@ -71,11 +72,12 @@ router.put('/events/:id', authMiddleware, async (req, res) => {
             return res.status(403).json({ message: 'You can only edit your own events' });
         }
 
-        if (name) event.name = name;
+        if (title) event.title = title;
         if (description) event.description = description;
         if (date) event.date = date;
         if (hour) event.hour = hour;
         if (status) event.status = status;
+        if (location) event.location = location;
 
         await event.save();
         res.json(event);
@@ -86,7 +88,7 @@ router.put('/events/:id', authMiddleware, async (req, res) => {
 
 // Get all events created by the authenticated user
 router.get('/events', authMiddleware, async (req, res) => {
-    const userId = req.user.id; // Get the user from the authenticated token
+    const userId = req.user.id; 
 
     try {
         const events = await Event.find({ createdBy: userId });
