@@ -4,6 +4,7 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/userModel');
 const Event = require('../models/eventModel');
 const authMiddleware = require('../middleware/authMiddleware');
+const { deleteEvent } = require('../controllers/eventController');
 const router = express.Router();
 
 // User registration
@@ -88,13 +89,31 @@ router.put('/events/:id', authMiddleware, async (req, res) => {
 
 // Get all events created by the authenticated user
 router.get('/events', authMiddleware, async (req, res) => {
-    const userId = req.user.id; 
+    const userId = req.user.id;
 
     try {
         const events = await Event.find({ createdBy: userId });
         res.json(events);
     } catch (err) {
         res.status(500).json({ message: err.message });
+    }
+});
+
+router.delete('/events/:id', authMiddleware, async (req, res) => {
+    const { id } = req.params; 
+    const userId = req.user.id; 
+    try {
+        
+        const event = await Event.findOne({ _id: id, user: userId });
+
+        if (!event) {
+            return res.status(404).json({ message: 'Event not found or unauthorized to delete.' });
+        }
+        await event.deleteOne();
+        res.status(200).json({ message: 'Event deleted successfully.' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'An error occurred while deleting the event.' });
     }
 });
 

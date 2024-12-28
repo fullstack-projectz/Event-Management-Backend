@@ -153,15 +153,13 @@ router.patch('/events/:id', authMiddleware, async (req, res) => {
 // Admin route to delete an event
 router.delete('/events/:id', authMiddleware, async (req, res) => {
     try {
-        const event = await Event.findById(req.params.id); // Find the event by ID
+        const event = await Event.findById(req.params.id);
         if (!event) return res.status(404).json({ message: 'Event not found' });
 
-        // Check if the logged-in user is an admin
         if (req.user.role !== 'admin') {
             return res.status(403).json({ message: 'You are not authorized to delete this event' });
         }
 
-        // Delete the event
         await Event.findByIdAndDelete(req.params.id);
         res.json({ message: 'Event deleted successfully' });
     } catch (err) {
