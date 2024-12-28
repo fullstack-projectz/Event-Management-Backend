@@ -42,7 +42,7 @@ router.post('/login', async (req, res) => {
 
 // Create an event (only for authenticated users)
 router.post('/events', authMiddleware, async (req, res) => {
-    const { name, description, date, hour } = req.body;
+    const { title, description, date, hour, location } = req.body;
     const userId = req.user.id; // Get the user from the authenticated token
 
     try {
@@ -50,7 +50,7 @@ router.post('/events', authMiddleware, async (req, res) => {
             title,
             description,
             date,
-            location, 
+            location,
             createdBy: userId,
         });
         await event.save();
@@ -63,7 +63,7 @@ router.post('/events', authMiddleware, async (req, res) => {
 // Edit an event (only for the event's creator)
 router.put('/events/:id', authMiddleware, async (req, res) => {
     const { name, description, date, hour, status } = req.body;
-    const userId = req.user.id; // Get the user from the authenticated token
+    const userId = req.user.id;
 
     try {
         const event = await Event.findById(req.params.id);
