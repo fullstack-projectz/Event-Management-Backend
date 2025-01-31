@@ -16,8 +16,7 @@ router.post('/register', async (req, res) => {
         const user = new User({ name, email, password });
         await user.save();
 
-        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-        res.status(201).json({ token });
+        res.status(201).json({ "message": "User created sucessfully" });
     } catch (err) {
         res.status(500).json({ message: err.message });
     }
@@ -99,11 +98,11 @@ router.get('/events', authMiddleware, async (req, res) => {
 });
 
 router.delete('/events/:id', authMiddleware, async (req, res) => {
-    const { id } = req.params; 
-    const userId = req.user.id; 
+    const { id } = req.params;
+    const userId = req.user.id;
     try {
-        
-        const event = await Event.findOne({ _id: id});
+
+        const event = await Event.findOne({ _id: id });
 
         if (!event) {
             return res.status(404).json({ message: 'Event not found or unauthorized to delete.' });
