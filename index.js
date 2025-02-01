@@ -21,7 +21,8 @@ app.use(cookieParser());
 app.use(
    cors({
       credentials: true,
-      origin: ["http://localhost:5173", "http://localhost:3000", "https://capable-unicorn-b52efc.netlify.app/"],
+      origin: ["http://localhost:5173", "http://localhost:3000", "https://capable-unicorn-b52efc.netlify.app"],
+      methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
    })
 );
 
@@ -29,14 +30,14 @@ app.use(
 mongoose.connect(process.env.MONGO_URI, {
    useNewUrlParser: true,
    useUnifiedTopology: true,
- }); 
+});
 
 const storage = multer.diskStorage({
    destination: (req, file, cb) => {
       cb(null, "uploads/");
    },
    filename: (req, file, cb) => {
-      cb(null, Date.now() + path.extname(file.originalname)); 
+      cb(null, Date.now() + path.extname(file.originalname));
    },
 
 });
@@ -129,7 +130,7 @@ app.post("/createEvent", upload.single("image"), async (req, res) => {
    try {
       const eventData = req.body;
       if (req.file) {
-         eventData.image = `uploads/${req.file.filename}`; 
+         eventData.image = `uploads/${req.file.filename}`;
       } else {
          eventData.image = "";
       }
